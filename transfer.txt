@@ -1,0 +1,94 @@
+using System;
+
+class Program
+{
+    static string CalculateTransferTime(string fileSizeStr, string unit)
+    {
+        if (!decimal.TryParse(fileSizeStr, out decimal fileSize))
+            return "Error: Entered file size is not a valid number.";
+
+        if (fileSize < 0 || fileSize > 2147483647)
+            return "Error: Entered file size is invalid or out of range (0 to 2147483647).";
+
+        decimal transmissionRate = 960; // bytes/second
+
+        decimal fileSizeBytes;
+        switch (unit.ToUpper())
+        {
+            case "B":
+                fileSizeBytes = fileSize;
+                break;
+            case "KB":
+                fileSizeBytes = fileSize * 1024;
+                break;
+            case "MB":
+                fileSizeBytes = fileSize * 1024 * 1024;
+                break;
+            default:
+                return "Error: Entered file size unit is invalid.";
+        }
+
+        decimal transferTimeSeconds = fileSizeBytes / transmissionRate;
+
+        int milliseconds = (int)(transferTimeSeconds * 1000);
+        int days = milliseconds / (1000 * 60 * 60 * 24);
+        milliseconds %= (1000 * 60 * 60 * 24);
+        int hours = milliseconds / (1000 * 60 * 60);
+        milliseconds %= (1000 * 60 * 60);
+        int minutes = milliseconds / (1000 * 60);
+        milliseconds %= (1000 * 60);
+        int seconds = milliseconds / 1000;
+        milliseconds %= 1000;
+
+        return $"File transfer time calculation operation completed successfully.\nTotal time required to transfer file of size {fileSize} {unit}:\n\nDays: {days}\nHours: {hours}\nMinutes: {minutes}\nSeconds: {seconds}\nMilliseconds: {milliseconds}";
+    }
+
+    static void Main(string[] args)
+    {
+        Console.WriteLine("FILE TRANSFER TIME CALCULATION\n");
+
+        Console.Write("Transmission rate: 960 bytes/sec\n\n");
+
+        while (true)
+        {
+            Console.Write("Enter the file size (Range: 0 to 2147483647): ");
+            string fileSize = Console.ReadLine().Trim();
+
+            if (string.IsNullOrWhiteSpace(fileSize))
+            {
+                Console.WriteLine("Error: File size cannot be empty.");
+                continue;
+            }
+
+            if (!decimal.TryParse(fileSize, out _))
+            {
+                Console.WriteLine("Error: Entered file size is not a valid number.");
+                continue;
+            }
+
+            while (true)
+            {
+                Console.Write("Enter the file size unit [B or KB or MB]: ");
+                string fileUnit = Console.ReadLine().Trim().ToUpper();
+
+                if (string.IsNullOrWhiteSpace(fileUnit))
+                {
+                    Console.WriteLine("Error: File size unit cannot be empty.");
+                    continue;
+                }
+
+                string result = CalculateTransferTime(fileSize, fileUnit);
+                if (result.StartsWith("Error"))
+                {
+                    Console.WriteLine(result);
+                }
+                else
+                {
+                    Console.WriteLine("\nCALCULATION RESULT\n");
+                    Console.WriteLine(result);
+                    return;
+                }
+            }
+        }
+    }
+}
