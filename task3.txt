@@ -1,0 +1,121 @@
+using System;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        int[,] array = GetArrayFromInput();
+        if (array == null)
+        {
+            Console.WriteLine("Error: Unable to create the array. Exiting program.");
+            return;
+        }
+
+        Console.WriteLine("You have entered the following array values:");
+        PrintArray(array);
+
+        char sortColumn = GetSortColumn();
+        int sortingType = GetSortingType();
+
+        SortArray(array, sortColumn, sortingType);
+
+        Console.WriteLine("\nSorted 2D array:");
+        PrintArray(array);
+    }
+
+    static int[,] GetArrayFromInput()
+    {
+        Console.WriteLine("Enter the number of rows for the 2D array (between 1 and 10):");
+        if (!int.TryParse(Console.ReadLine(), out int rowCount) || rowCount < 1 || rowCount > 10)
+        {
+            Console.WriteLine("Error: Invalid input for row count.");
+            return null;
+        }
+
+        Console.WriteLine("Enter the elements for the 2D array:");
+
+        int[,] array = new int[rowCount, 2];
+        for (int i = 0; i < rowCount; i++)
+        {
+            Console.Write($"Enter element for [{i}, 0]: ");
+            if (!int.TryParse(Console.ReadLine(), out array[i, 0]))
+            {
+                Console.WriteLine("Error: Invalid input for array element.");
+                return null;
+            }
+
+            Console.Write($"Enter element for [{i}, 1]: ");
+            if (!int.TryParse(Console.ReadLine(), out array[i, 1]))
+            {
+                Console.WriteLine("Error: Invalid input for array element.");
+                return null;
+            }
+        }
+
+        return array;
+    }
+
+    static char GetSortColumn()
+    {
+        Console.Write("On which column do you want to sort (Enter X/x or Y/y): ");
+        char column = Console.ReadLine().ToLower()[0];
+        while (column != 'x' && column != 'y')
+        {
+            Console.Write("Invalid input. Please enter X/x or Y/y: ");
+            column = Console.ReadLine().ToLower()[0];
+        }
+        return column;
+    }
+
+    static int GetSortingType()
+    {
+        Console.Write("Which sorting type do you want to apply (Enter 1 for Ascending sorting, 2 for Descending sorting): ");
+        if (!int.TryParse(Console.ReadLine(), out int sortingType) || (sortingType != 1 && sortingType != 2))
+        {
+            Console.WriteLine("Invalid sorting type. Please enter 1 for Ascending or 2 for Descending sorting.");
+            return GetSortingType();
+        }
+        return sortingType;
+    }
+
+    static void SortArray(int[,] array, char column, int sortingType)
+    {
+        int rows = array.GetLength(0);
+        int cols = array.GetLength(1);
+
+        for (int i = 0; i < rows - 1; i++)
+        {
+            for (int j = i + 1; j < rows; j++)
+            {
+                if ((column == 'x' && sortingType == 1 && array[i, 0] > array[j, 0]) ||
+                    (column == 'x' && sortingType == 2 && array[i, 0] < array[j, 0]) ||
+                    (column == 'y' && sortingType == 1 && array[i, 1] > array[j, 1]) ||
+                    (column == 'y' && sortingType == 2 && array[i, 1] < array[j, 1]))
+                {
+                    // Swap rows i and j
+                    for (int k = 0; k < cols; k++)
+                    {
+                        int temp = array[i, k];
+                        array[i, k] = array[j, k];
+                        array[j, k] = temp;
+                    }
+                }
+            }
+        }
+    }
+
+    static void PrintArray(int[,] array)
+    {
+        int rows = array.GetLength(0);
+        int cols = array.GetLength(1);
+
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                Console.Write(array[i, j] + " ");
+            }
+            Console.WriteLine();
+        }
+    }
+}
