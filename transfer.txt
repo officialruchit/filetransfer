@@ -7,7 +7,7 @@ class Program
         if (!decimal.TryParse(fileSizeStr, out decimal fileSize))
             return "Error: Entered file size is not a valid number.";
 
-        if (fileSize < 0 || fileSize > 2147483647)
+        if (fileSize < 0 && fileSize > 2147483647)
             return "Error: Entered file size is invalid or out of range (0 to 2147483647).";
 
         decimal transmissionRate = 960; // bytes/second
@@ -30,7 +30,7 @@ class Program
 
         decimal transferTimeSeconds = fileSizeBytes / transmissionRate;
 
-        int milliseconds = (int)(transferTimeSeconds * 1000);
+        int milliseconds = (int)Convert.ToInt64(transferTimeSeconds * 1000);
         int days = milliseconds / (1000 * 60 * 60 * 24);
         milliseconds %= (1000 * 60 * 60 * 24);
         int hours = milliseconds / (1000 * 60 * 60);
@@ -65,7 +65,19 @@ class Program
                 Console.WriteLine("Error: Entered file size is not a valid number.");
                 continue;
             }
+            if (!decimal.TryParse(fileSize, out decimal CheckfileSize))
+            {
+                Console.WriteLine("Error: Entered file size is not a valid number.");
+                continue;
 
+            }
+
+            if (Convert.ToDecimal(fileSize) < 0 || Convert.ToDecimal(fileSize) > 2147483647)
+            {
+                Console.WriteLine("Error: Entered file size is invalid or out of range (0 to 2147483647).");
+                continue;
+            }
+            
             while (true)
             {
                 Console.Write("Enter the file size unit [B or KB or MB]: ");
